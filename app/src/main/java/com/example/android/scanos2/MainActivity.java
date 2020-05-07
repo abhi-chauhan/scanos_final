@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
@@ -28,11 +30,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +52,7 @@ public class MainActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
 
         checkPermission();
         FloatingActionButton fab =
@@ -67,6 +65,39 @@ public class MainActivity extends AppCompatActivity {
                 openCamera(view);
             }
         });
+        ArrayList<ExampleItem> exampleList = new ArrayList<>();
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 1", "Line 2"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 1", "Line 2"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 3", "Line 4"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 5", "Line 6"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 7", "Line 8"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 9", "Line 10"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 11", "Line 12"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 13", "Line 14"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 15", "Line 16"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 17", "Line 18"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 19", "Line 20"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 21", "Line 22"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 23", "Line 24"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 25", "Line 26"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 27", "Line 28"));
+        exampleList.add(new ExampleItem(R.drawable.ic_insert_drive_file, "Line 29", "Line 30"));
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new ExampleAdapter(exampleList);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
     public void openCamera(View v){
 
@@ -106,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     private void saveImage(Bitmap finalBitmap) {
 
         String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/saved_images");
+        File myDir = new File(root + "/Scanos");
         myDir.mkdirs();
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

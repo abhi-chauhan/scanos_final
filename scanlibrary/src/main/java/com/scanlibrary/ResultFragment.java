@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import java.io.IOException;
 
 /**
@@ -111,7 +112,11 @@ public class ResultFragment extends Fragment {
                 }
             });
         }
+
+
     }
+
+
 
     private class BWButtonClickListener implements View.OnClickListener {
         @Override

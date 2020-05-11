@@ -28,8 +28,7 @@ public class ExampleDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         String filename= editFilename.getText().toString();
-
-                        listener.applyTexts(filename );
+                        listener.applyTexts(filename);
                     }
                 });
         editFilename= view.findViewById(R.id.editFilename);

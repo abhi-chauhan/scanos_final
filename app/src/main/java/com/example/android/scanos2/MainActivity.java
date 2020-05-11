@@ -1,12 +1,8 @@
 package com.example.android.scanos2;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.Manifest;
 import android.app.Activity;
@@ -30,23 +26,23 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ExampleDialog.ExampleDialogListener {
 
-    private String UserInput="null";
+public String UserInput;
     @Override
     public void applyTexts(String filename) {
-         UserInput=filename;
+        modify_string(filename);
+        openCamera();
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         checkPermission();
         FloatingActionButton fab =
                 (FloatingActionButton) findViewById(R.id.fab);
@@ -54,13 +50,14 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             @Override
             public void onClick(View view) {
                 // Handle the click.
-
-                openCamera(view);
-
+                openDialog();
 
             }
         });
 
+    }
+    public void modify_string(String b){
+        UserInput=b;
     }
     public void openScanos(View view){
         Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory() + "/Scanos/");
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             startActivity(intent);
         }
     }
-    public void openCamera(View v){
+    public void openCamera(){
 
         int REQUEST_CODE = 99;
         int preference = ScanConstants.OPEN_CAMERA;
@@ -83,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
     private void openDialog(){
         ExampleDialog exampleDialog= new ExampleDialog();
         exampleDialog.show(getSupportFragmentManager(),"example dialog");
+
     }
     private void checkPermission() {
         //ask for permission
@@ -103,16 +101,16 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
                 .check();
     }
     private void saveImage(Bitmap finalBitmap, String a) {
-        String b=a;
+
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/Scanos");
         myDir.mkdirs();
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fname =  b +".jpg";
+        String fname =  a +".jpg";
 
         File file = new File(myDir, fname);
-        //if (file.exists()) file.delete ();
+
         try {
             FileOutputStream out = new FileOutputStream(file);
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -131,9 +129,8 @@ public class MainActivity extends AppCompatActivity implements ExampleDialog.Exa
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                 getContentResolver().delete(uri, null, null);
-                openDialog();
+
                 saveImage(bitmap,UserInput);
-                //scannedImageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }

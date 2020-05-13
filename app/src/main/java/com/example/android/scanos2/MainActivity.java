@@ -1,8 +1,8 @@
 package com.example.android.scanos2;
 
 
-import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -29,9 +30,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ExampleDialog.ExampleDialogListener {
-
+public class MainActivity extends AppCompatActivity implements ExampleDialog.ExampleDialogListener, SearchDialog.SearchDialogListener {
 public String UserInput;
+public String Keysearch="Abhi";
+private Button btn;
+
     @Override
     public void applyTexts(String filename) {
         modify_string(filename);
@@ -40,10 +43,24 @@ public String UserInput;
     }
 
     @Override
+    public void applySearch(String keyword) {
+       modify_keysearch(keyword);
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermission();
+        btn= (Button) findViewById(R.id.button);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                   openDialog2(v);
+            }
+        });
         FloatingActionButton fab =
                 (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,19 +73,29 @@ public String UserInput;
         });
 
     }
+
     public void modify_string(String b){
         UserInput=b;
     }
-    public void openScanos(View view){
-        Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory() + "/Scanos/");
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setDataAndType(selectedUri, "*/*");
 
-        if (intent.resolveActivityInfo(getPackageManager(), 0) != null)
-        {
-            startActivity(intent);
-        }
+    public void modify_keysearch(String t){Keysearch=t; openScanos();}
+
+    public void openDialog2(View v) {
+        SearchDialog searchDialog = new SearchDialog();
+        searchDialog.show(getSupportFragmentManager(), "search dialog");
     }
+
+    public void openScanos(){
+        Uri selectedUri = Uri.parse(Environment
+                .getExternalStorageDirectory()
+                .toString()+"/Scanos/"+Keysearch+".jpg");
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(selectedUri,"*/*");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     public void openCamera(){
 
         int REQUEST_CODE = 99;
@@ -77,11 +104,13 @@ public String UserInput;
         intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference);
         startActivityForResult(intent, REQUEST_CODE);
     }
+
     private void openDialog(){
         ExampleDialog exampleDialog= new ExampleDialog();
         exampleDialog.show(getSupportFragmentManager(),"example dialog");
 
     }
+
     private void checkPermission() {
         //ask for permission
         PermissionListener permissionListener= new PermissionListener() {
@@ -100,16 +129,16 @@ public String UserInput;
                 .setPermissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET)
                 .check();
     }
+
     private void saveImage(Bitmap finalBitmap, String a) {
 
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/Scanos");
         myDir.mkdirs();
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fname =  a +".jpg";
 
-        File file = new File(myDir, fname);
+         File file = new File(myDir, fname);
 
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -120,6 +149,7 @@ public String UserInput;
             e.printStackTrace();
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -138,6 +168,6 @@ public String UserInput;
 
         }
 
-    }
+}
 
 
